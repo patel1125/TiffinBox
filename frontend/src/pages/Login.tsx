@@ -9,6 +9,9 @@ const Login = () => {
   const [error, setError] = useState('');
   const { login } = useAuth();
   const navigate = useNavigate();
+   
+
+
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -23,6 +26,9 @@ const Login = () => {
       setError(err.response?.data?.message || 'Login failed');
     }
   };
+
+
+
 
   return (
     <div className="container" style={{ paddingTop: 60, maxWidth: 400 }}>
@@ -45,5 +51,6 @@ const Login = () => {
     </div>
   );
 };
+
 
 export default Login;
