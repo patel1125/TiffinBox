@@ -8,7 +8,7 @@ const CartPage = () => {
   const navigate = useNavigate();
 
   const fetchCart = async () => {
-    const { data } = await api.get('/cart');
+    const { data } = await api.get('/cart'); 
     setCart(data);
   };
 
