@@ -64,7 +64,7 @@ const Orders = () => {
                     </a>
                   </>
                 ) : (
-                  <p style={{ margin: 0 }}>No tracking data yet — the delivery agent hasn't started sharing location.</p>
+                  <p style={{ margin: 0 }}>The delivery agent hasn't started sharing location.</p>
                 )}
               </div>
             )}
