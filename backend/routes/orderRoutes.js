@@ -6,7 +6,12 @@ const { protect, authorizeRoles } = require('../middleware/auth');
 
 const router = express.Router();
 
+
+
+
 const generateOrderNumber = () => `ORD-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+
+
 
 router.post('/', protect, async (req, res, next) => {
   try {
@@ -40,6 +45,9 @@ router.post('/', protect, async (req, res, next) => {
   }
 });
 
+
+
+
 router.get('/my-orders', protect, async (req, res, next) => {
   try {
     const orders = await Order.find({ userId: req.user._id }).sort({ createdAt: -1 });
@@ -48,6 +56,9 @@ router.get('/my-orders', protect, async (req, res, next) => {
     next(error);
   }
 });
+
+
+
 
 router.get('/:id', protect, async (req, res, next) => {
   try {
@@ -63,6 +74,9 @@ router.get('/:id', protect, async (req, res, next) => {
   }
 });
 
+
+
+
 router.put('/:id/status', protect, authorizeRoles('restaurantOwner', 'admin', 'deliveryAgent'), async (req, res, next) => {
   try {
     const order = await Order.findByIdAndUpdate(req.params.id, { orderStatus: req.body.orderStatus }, { new: true });
@@ -71,5 +85,6 @@ router.put('/:id/status', protect, authorizeRoles('restaurantOwner', 'admin', 'd
     next(error);
   }
 });
+
 
 module.exports = router;
