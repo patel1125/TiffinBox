@@ -223,7 +223,7 @@ const OwnerDashboard = () => {
                 <select value={o.orderStatus} onChange={(e) => updateOrderStatus(o._id, e.target.value)}>
                   <option value="placed">Placed</option>
                   <option value="confirmed">Confirmed</option>
-                  <option value="preparing">Preparing</option>
+                  <option value="preparing">Preparing!</option>
                   <option value="outForDelivery">Out for Delivery</option>
                   <option value="delivered">Delivered</option>
                   <option value="cancelled">Cancelled</option>
