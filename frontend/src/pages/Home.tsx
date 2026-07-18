@@ -13,9 +13,11 @@ const Home = () => {
     const fetchRestaurants = async () => {
       try {
         const { data } = await api.get('/restaurants', { params: { search } });
-        setRestaurants(data);
+        const list = Array.isArray(data) ? data : [];
+        setRestaurants(list);
       } catch (error) {
         console.error(error);
+        setRestaurants([]);
       } finally {
         setLoading(false);
       }
