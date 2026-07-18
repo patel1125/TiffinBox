@@ -17,6 +17,7 @@ const MenuItemCard = ({
   onDecrement,
 }: Props) => {
   const [loading, setLoading] = useState(false);
+  const isVeg = (item as any).isVeg ?? false;
 
   const handleAdd = async () => {
     if (!item.isAvailable || loading) return;
