@@ -35,7 +35,7 @@ const Checkout = () => {
         </select>
       </div>
       <button className="btn btn-primary" onClick={handlePlaceOrder} disabled={!address}>
-        Place Order
+        Place an Order
       </button>
     </div>
   );

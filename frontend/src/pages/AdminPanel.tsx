@@ -55,19 +55,19 @@ const AdminPanel = () => {
         <div className="restaurant-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', marginBottom: 24 }}>
           <div className="card" style={{ padding: 16, textAlign: 'center' }}>
             <div style={{ fontSize: 26, fontWeight: 700 }}>{stats.userCount}</div>
-            <div style={{ fontSize: 12, color: 'var(--color-muted)' }}>Users</div>
+            <div style={{ fontSize: 12, color: 'var(--color-muted)' }}>User</div>
           </div>
           <div className="card" style={{ padding: 16, textAlign: 'center' }}>
             <div style={{ fontSize: 26, fontWeight: 700 }}>{stats.restaurantCount}</div>
-            <div style={{ fontSize: 12, color: 'var(--color-muted)' }}>Restaurants</div>
+            <div style={{ fontSize: 12, color: 'var(--color-muted)' }}>Restaurant</div>
           </div>
           <div className="card" style={{ padding: 16, textAlign: 'center' }}>
             <div style={{ fontSize: 26, fontWeight: 700 }}>{stats.orderCount}</div>
-            <div style={{ fontSize: 12, color: 'var(--color-muted)' }}>Orders</div>
+            <div style={{ fontSize: 12, color: 'var(--color-muted)' }}>Order</div>
           </div>
           <div className="card" style={{ padding: 16, textAlign: 'center' }}>
             <div style={{ fontSize: 26, fontWeight: 700 }}>{stats.agentCount}</div>
-            <div style={{ fontSize: 12, color: 'var(--color-muted)' }}>Delivery Agents</div>
+            <div style={{ fontSize: 12, color: 'var(--color-muted)' }}>Delivery Agent</div>
           </div>
         </div>
       )}

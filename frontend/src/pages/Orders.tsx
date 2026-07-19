@@ -283,6 +283,7 @@ const Orders = () => {
                     hasn't shared
                     location yet.
                   </p>
+                  <p style={{ margin: 0 }}>The delivery agent hasn't started sharing location.</p>
                 )}
               </div>
             )}

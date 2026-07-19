@@ -99,7 +99,7 @@ const AgentDashboard = () => {
 
       <h3>Assigned Orders</h3>
       {orders.length === 0 ? (
-        <p style={{ color: 'var(--color-muted)' }}>No orders assigned to you yet.</p>
+        <p style={{ color: 'var(--color-muted)' }}>No orders assigned yet.</p>
       ) : (
         orders.map((o) => (
           <div key={o._id} className="card" style={{ padding: 16, marginBottom: 10 }}>

@@ -69,9 +69,9 @@ const Home = () => {
         )}
 
         {loading ? (
-          <p style={{ marginTop: 24 }}>Loading restaurants...</p>
+          <p style={{ marginTop: 24 }}>Loading restaurants....</p>
         ) : filtered.length === 0 ? (
-          <div className="empty-state">No restaurants found. Try a different search.</div>
+          <div className="empty-state">No restaurants found. Try a different search!</div>
         ) : (
           <div className="restaurant-grid">
             {filtered.map((r) => (
