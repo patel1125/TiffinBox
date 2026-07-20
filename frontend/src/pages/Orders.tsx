@@ -278,7 +278,11 @@ const Orders = () => {
 
                   </>
                 ) : (
-                  <p style={{ margin: 0 }}>The delivery agent hasn't started sharing location.</p>
+                  <p>
+                    Delivery partner
+                    hasn't shared
+                    location yet.
+                  </p>
                 )}
               </div>
             )}
