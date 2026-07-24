@@ -1,4 +1,4 @@
-# OmnichannelRetailPOS-InventorySystem
+# Integrated Food Delivery and Dine-Out Hospiatality Platfrom
 
 A full-stack food delivery and table reservation app (product name: **TiffinBox**, shown in the UI).
 - **Frontend:** React + TypeScript + Vite
@@ -8,8 +8,8 @@ A full-stack food delivery and table reservation app (product name: **TiffinBox*
 
 ## Opening this in VS Code (Windows)
 
-1. Unzip the downloaded `OmnichannelRetailPOS-InventorySystem.zip` somewhere like `C:\Users\<you>\Projects\`.
-2. Open VS Code → **File > Open Folder** → select the unzipped `OmnichannelRetailPOS-InventorySystem` folder.
+1. Unzip the downloaded `TiffinBox.zip` somewhere like `C:\Users\<you>\Projects\`.
+2. Open VS Code → **File > Open Folder** → select the unzipped `TiffinBox` folder.
 
 ## Pushing to your GitHub repo
 
@@ -18,7 +18,7 @@ git init
 git add .
 git commit -m "Initial commit"
 git branch -M main
-git remote add origin https://github.com/patel1125/OmnichannelRetailPOS-InventorySystem.git
+git remote add origin https://github.com/patel1125/TiffinBox.githttps://git
 git push -u origin main
 ```
 
@@ -63,7 +63,7 @@ When registering, choose a role:
 
 ## Folder structure
 ```
-OmnichannelRetailPOS-InventorySystem/
+TiffinBox/
 ├── backend/
 │   ├── server.js, seed.js
 │   ├── config/db.js
