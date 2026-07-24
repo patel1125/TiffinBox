@@ -77,7 +77,7 @@ const RestaurantDetail = () => {
 
   const handleAdd = async (item: MenuItem) => {
     if (!user) {
-      setMessage('Please log in to add items to your cart.');
+      navigate('/login');
       return;
     }
     await api.post('/cart/add', { restaurantId: id, menuItemId: item._id, quantity: 1 });
@@ -145,7 +145,7 @@ const RestaurantDetail = () => {
           <div key={cat._id} id={`cat-${cat._id}`} style={{ marginBottom: 28, paddingTop: 8 }}>
             <h3>{cat.categoryName}</h3>
             {items
-              .filter((it) => it.categoryId === cat._id)
+              .filter((it) => (typeof it.categoryId === 'string' ? it.categoryId : it.categoryId._id) === cat._id)
               .map((it) => (
                 <MenuItemCard
                   key={it._id}

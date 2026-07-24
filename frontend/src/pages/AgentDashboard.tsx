@@ -15,6 +15,8 @@ const AgentDashboard = () => {
   const [regForm, setRegForm] = useState({ vehicleType: 'bike', licenseNumber: '' });
   const [lat, setLat] = useState('');
   const [lng, setLng] = useState('');
+  const [locationMessage, setLocationMessage] = useState('');
+  const [savingLocation, setSavingLocation] = useState(false);
 
   const loadAgent = async () => {
     try {
@@ -41,26 +43,50 @@ const AgentDashboard = () => {
 
   const toggleAvailability = async () => {
     if (!agent) return;
-    await api.put(`/delivery/agents/${agent._id}/availability`, { isAvailable: !agent.isAvailable });
+    await api.put('/delivery/agents/me/availability', { isAvailable: !agent.isAvailable });
     loadAgent();
   };
 
   const updateLocation = async (e: FormEvent) => {
     e.preventDefault();
-    const myOrders = orders.filter((o) => o.orderStatus === 'outForDelivery');
-    if (myOrders.length === 0 || !agent) return;
-    await Promise.all(
-      myOrders.map((o) =>
-        api.post('/delivery/tracking', {
-          orderId: o._id,
-          deliveryAgentId: agent._id,
-          latitude: Number(lat),
-          longitude: Number(lng),
-        })
-      )
+    const latitude = Number(lat);
+    const longitude = Number(lng);
+    if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) {
+      setLocationMessage('Enter valid latitude and longitude values.');
+      return;
+    }
+    setSavingLocation(true);
+    try {
+      await api.put('/delivery/agents/me/location', { latitude, longitude });
+      const myOrders = orders.filter((o) => o.orderStatus === 'outForDelivery');
+      if (myOrders.length > 0 && agent) {
+        await Promise.all(myOrders.map((o) => api.post('/delivery/tracking', { orderId: o._id, latitude, longitude })));
+      }
+      setLat('');
+      setLng('');
+      setLocationMessage(myOrders.length > 0 ? 'Location shared with your active delivery.' : 'Your delivery location has been saved.');
+    } catch (error: any) {
+      setLocationMessage(error.response?.data?.message || 'Unable to save location. Please log in as a delivery agent and try again.');
+    } finally {
+      setSavingLocation(false);
+    }
+  };
+
+  const useCurrentLocation = () => {
+    if (!navigator.geolocation) {
+      setLocationMessage('Your browser does not support location services.');
+      return;
+    }
+    setLocationMessage('Getting your current location...');
+    navigator.geolocation.getCurrentPosition(
+      ({ coords }) => {
+        setLat(coords.latitude.toFixed(6));
+        setLng(coords.longitude.toFixed(6));
+        setLocationMessage('Location found. Select Save Location to send it.');
+      },
+      () => setLocationMessage('Location access was blocked. Allow location access in your browser or enter coordinates manually.'),
+      { enableHighAccuracy: true, timeout: 10000 }
     );
-    setLat('');
-    setLng('');
   };
 
   if (!agent) {
@@ -104,26 +130,39 @@ const AgentDashboard = () => {
         orders.map((o) => (
           <div key={o._id} className="card" style={{ padding: 16, marginBottom: 10 }}>
             <strong>{o.orderNumber}</strong>
-            <p style={{ fontSize: 13, color: 'var(--color-muted)' }}>{o.deliveryAddress}</p>
+            <p style={{ fontSize: 13, color: 'var(--color-muted)', marginBottom: 6 }}>
+              <strong style={{ color: 'inherit' }}>Customer delivery location:</strong> {o.deliveryAddress}
+            </p>
+            <a
+              href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(o.deliveryAddress)}`}
+              target="_blank"
+              rel="noreferrer"
+              style={{ fontSize: 13 }}
+            >
+              Open customer location in Google Maps →
+            </a>
             <p style={{ fontSize: 13 }}>Status: {o.orderStatus}</p>
           </div>
         ))
       )}
 
-      {orders.some((o) => o.orderStatus === 'outForDelivery') && (
-        <form onSubmit={updateLocation} className="card" style={{ padding: 16, marginTop: 20, maxWidth: 360 }}>
-          <h3 style={{ marginTop: 0 }}>Update My Location</h3>
-          <div className="form-group">
-            <label>Latitude</label>
-            <input value={lat} onChange={(e) => setLat(e.target.value)} required placeholder="23.0225" />
-          </div>
-          <div className="form-group">
-            <label>Longitude</label>
-            <input value={lng} onChange={(e) => setLng(e.target.value)} required placeholder="72.5714" />
-          </div>
-          <button className="btn btn-primary" type="submit">Send Location</button>
-        </form>
-      )}
+      <form onSubmit={updateLocation} className="card" style={{ padding: 16, marginTop: 20, maxWidth: 360 }}>
+        <h3 style={{ marginTop: 0 }}>Set My Location</h3>
+        <div className="form-group">
+          <label>Latitude</label>
+          <input value={lat} onChange={(e) => setLat(e.target.value)} required placeholder="23.0225" />
+        </div>
+        <div className="form-group">
+          <label>Longitude</label>
+          <input value={lng} onChange={(e) => setLng(e.target.value)} required placeholder="72.5714" />
+        </div>
+        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+          <button className="btn btn-outline" type="button" onClick={useCurrentLocation}>Use My Current Location</button>
+          <button className="btn btn-primary" type="submit" disabled={savingLocation}>{savingLocation ? 'Saving...' : 'Save Location'}</button>
+        </div>
+        {locationMessage && <p style={{ marginBottom: 0, color: 'var(--color-muted)' }}>{locationMessage}</p>}
+      </form>
+
     </div>
   );
 };

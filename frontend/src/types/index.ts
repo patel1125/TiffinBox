@@ -28,13 +28,14 @@ export interface MenuCategory {
 export interface MenuItem {
   _id: string;
   restaurantId: string;
-  categoryId: string;
+  categoryId: MenuCategory | string;
   itemName: string;
   description?: string;
   price: number;
   image?: string;
   isAvailable: boolean;
   preparationTime?: number;
+  isVeg?: boolean;
 }
 
 export interface CartItem {

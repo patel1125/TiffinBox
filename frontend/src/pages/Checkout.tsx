@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 
 const Checkout = () => {
-  const [address, setAddress] = useState('');
+  const [address, setAddress] = useState(() => localStorage.getItem('tiffinbox_delivery_address') || '');
   const [paymentMethod, setPaymentMethod] = useState('cod');
   const navigate = useNavigate();
 

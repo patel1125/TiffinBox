@@ -17,7 +17,8 @@ const MenuItemCard = ({
   onDecrement,
 }: Props) => {
   const [loading, setLoading] = useState(false);
-  const isVeg = (item as any).isVeg ?? false;
+  const isVeg = item.isVeg ?? false;
+  const categoryName = typeof item.categoryId === 'string' ? '' : item.categoryId.categoryName;
 
   const handleAdd = async () => {
     if (!item.isAvailable || loading) return;
@@ -40,7 +41,7 @@ const MenuItemCard = ({
 
           <span
             className={`veg-dot ${
-              item.isVeg ? "veg" : "non-veg"
+              isVeg ? "veg" : "non-veg"
             }`}
           />
 
@@ -64,9 +65,9 @@ const MenuItemCard = ({
             ₹{item.price.toFixed(2)}
           </span>
 
-          {item.category && (
+          {categoryName && (
             <span className="menu-category">
-              {item.category}
+              {categoryName}
             </span>
           )}
 

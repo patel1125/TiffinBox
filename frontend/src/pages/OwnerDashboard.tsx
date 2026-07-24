@@ -43,11 +43,18 @@ const OwnerDashboard = () => {
   };
 
   useEffect(() => {
-    if (selectedId) {
-      loadMenu(selectedId);
+    if (!selectedId) return;
+
+    loadMenu(selectedId);
+
+    // Refresh when the owner opens the Orders tab and keep it current while
+    // that tab is visible, so newly placed customer orders appear promptly.
+    if (tab === 'orders') {
       loadOrders(selectedId);
+      const refreshId = window.setInterval(() => loadOrders(selectedId), 10000);
+      return () => window.clearInterval(refreshId);
     }
-  }, [selectedId]);
+  }, [selectedId, tab]);
 
   const handleCreateRestaurant = async (e: FormEvent) => {
     e.preventDefault();

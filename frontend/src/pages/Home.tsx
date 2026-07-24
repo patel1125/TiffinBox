@@ -8,16 +8,20 @@ const Home = () => {
   const [search, setSearch] = useState('');
   const [activeCuisine, setActiveCuisine] = useState('All');
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     const fetchRestaurants = async () => {
+      setLoading(true);
       try {
-        const { data } = await api.get('/restaurants', { params: { search } });
+        const { data } = await api.get('/restaurants', { params: { search, limit: 50 } });
         const list = Array.isArray(data) ? data : [];
         setRestaurants(list);
+        setError('');
       } catch (error) {
         console.error(error);
         setRestaurants([]);
+        setError('Unable to load restaurants. Make sure the backend server is running, then try again.');
       } finally {
         setLoading(false);
       }
@@ -70,6 +74,8 @@ const Home = () => {
 
         {loading ? (
           <p style={{ marginTop: 24 }}>Loading restaurants....</p>
+        ) : error ? (
+          <div className="empty-state">{error}</div>
         ) : filtered.length === 0 ? (
           <div className="empty-state">No restaurants found. Try a different search!</div>
         ) : (

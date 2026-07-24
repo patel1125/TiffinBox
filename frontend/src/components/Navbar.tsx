@@ -15,7 +15,9 @@ const Navbar = () => {
       <div className="container">
         <div className="brand-group">
           <Link to="/" className="brand">TiffinBox</Link>
-          <span className="location-pill">📍 Set delivery location</span>
+          {(!user || user.role === 'customer') && (
+            <Link to={user ? '/delivery-location' : '/login'} className="location-pill">📍 Set delivery location</Link>
+          )}
         </div>
         <nav>
           {(!user || user.role === 'customer') && <Link to="/">Restaurants</Link>}

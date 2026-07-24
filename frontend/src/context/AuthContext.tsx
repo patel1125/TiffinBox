@@ -12,7 +12,12 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(() => {
     const stored = localStorage.getItem('tiffinbox_user');
-    return stored ? JSON.parse(stored) : null;
+    try {
+      return stored ? JSON.parse(stored) : null;
+    } catch {
+      localStorage.removeItem('tiffinbox_user');
+      return null;
+    }
   });
 
   const login = (userData: User) => {

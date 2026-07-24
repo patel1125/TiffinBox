@@ -15,4 +15,14 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+// Most newer API routes return { success, data }, while a few older routes
+// return their payload directly. Keep the UI on one consistent shape.
+api.interceptors.response.use((response) => {
+  const body = response.data;
+  if (body && typeof body === 'object' && body.success === true && 'data' in body) {
+    response.data = body.data;
+  }
+  return response;
+});
+
 export default api;

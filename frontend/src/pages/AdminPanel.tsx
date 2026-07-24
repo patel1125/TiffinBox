@@ -38,12 +38,12 @@ const AdminPanel = () => {
   }, []);
 
   const changeRole = async (id: string, role: string) => {
-    await api.put(`/admin/users/${id}/role`, { role });
+    await api.patch(`/admin/users/${id}/role`, { role });
     loadAll();
   };
 
   const toggleRestaurant = async (id: string) => {
-    await api.put(`/admin/restaurants/${id}/toggle-active`);
+    await api.patch(`/admin/restaurants/${id}/status`);
     loadAll();
   };
 
