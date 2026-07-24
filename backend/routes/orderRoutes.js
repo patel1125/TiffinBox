@@ -2,6 +2,8 @@ const express = require('express');
 const Order = require('../models/Order');
 const OrderItem = require('../models/OrderItem');
 const Cart = require('../models/Cart');
+const DeliveryAgent = require('../models/DeliveryAgent');
+const Restaurant = require('../models/Restaurant');
 const { protect, authorizeRoles } = require('../middleware/auth');
 
 const router = express.Router();
@@ -21,12 +23,15 @@ router.post('/', protect, async (req, res, next) => {
       res.status(400);
       throw new Error('Cart is empty');
     }
+    const availableAgent = await DeliveryAgent.findOne({ isAvailable: true }).sort({ updatedAt: 1 });
     const order = await Order.create({
       orderNumber: generateOrderNumber(),
       userId: req.user._id,
       restaurantId: cart.restaurantId,
       totalAmount: cart.totalAmount,
       deliveryAddress,
+      deliveryAgentId: availableAgent?._id,
+      orderStatus: availableAgent ? 'outForDelivery' : 'placed',
     });
     await Promise.all(
       cart.items.map((item) =>
@@ -79,7 +84,33 @@ router.get('/:id', protect, async (req, res, next) => {
 
 router.put('/:id/status', protect, authorizeRoles('restaurantOwner', 'admin', 'deliveryAgent'), async (req, res, next) => {
   try {
-    const order = await Order.findByIdAndUpdate(req.params.id, { orderStatus: req.body.orderStatus }, { new: true });
+    const allowedStatuses = ['placed', 'confirmed', 'preparing', 'outForDelivery', 'delivered', 'cancelled'];
+    if (!allowedStatuses.includes(req.body.orderStatus)) {
+      res.status(400);
+      throw new Error('Invalid order status');
+    }
+
+    const order = await Order.findById(req.params.id);
+    if (!order) {
+      res.status(404);
+      throw new Error('Order not found');
+    }
+    if (req.user.role === 'restaurantOwner') {
+      const restaurant = await Restaurant.findOne({ _id: order.restaurantId, ownerId: req.user._id });
+      if (!restaurant) {
+        res.status(403);
+        throw new Error('You can only update orders for your own restaurant');
+      }
+    }
+    if (req.user.role === 'deliveryAgent') {
+      const agent = await DeliveryAgent.findOne({ userId: req.user._id });
+      if (!agent || !order.deliveryAgentId || order.deliveryAgentId.toString() !== agent._id.toString()) {
+        res.status(403);
+        throw new Error('This order is not assigned to you');
+      }
+    }
+    order.orderStatus = req.body.orderStatus;
+    await order.save();
     res.json(order);
   } catch (error) {
     next(error);

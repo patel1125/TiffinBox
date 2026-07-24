@@ -22,7 +22,7 @@ router.get("/categories/:restaurantId", async (req, res, next) => {
 
     const categories = await MenuCategory.find({
       restaurantId,
-    }).sort({ name: 1 });
+    }).sort({ categoryName: 1 });
 
     res.json({
       success: true,
@@ -42,9 +42,9 @@ router.post(
   authorizeRoles("restaurantOwner", "admin"),
   async (req, res, next) => {
     try {
-      const { restaurantId, name } = req.body;
+      const { restaurantId, categoryName } = req.body;
 
-      if (!restaurantId || !name?.trim()) {
+      if (!restaurantId || !categoryName?.trim()) {
         return res.status(400).json({
           success: false,
           message: "Restaurant ID and category name are required",
@@ -53,7 +53,7 @@ router.post(
 
       const existing = await MenuCategory.findOne({
         restaurantId,
-        name,
+        categoryName: categoryName.trim(),
       });
 
       if (existing) {
@@ -65,7 +65,7 @@ router.post(
 
       const category = await MenuCategory.create({
         restaurantId,
-        name: name.trim(),
+        categoryName: categoryName.trim(),
       });
 
       res.status(201).json({

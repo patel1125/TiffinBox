@@ -37,7 +37,7 @@ router.get(
         Restaurant.countDocuments(),
         Order.countDocuments(),
         DeliveryAgent.countDocuments(),
-        Order.countDocuments({ orderStatus: "pending" }),
+        Order.countDocuments({ orderStatus: "placed" }),
         Order.countDocuments({ orderStatus: "delivered" }),
         DeliveryAgent.countDocuments({ isAvailable: true }),
       ]);

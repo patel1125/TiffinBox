@@ -229,6 +229,31 @@ router.put(
   }
 );
 
+router.put(
+  "/agents/me/location",
+  protect,
+  authorizeRoles("deliveryAgent", "admin"),
+  async (req, res, next) => {
+    try {
+      const { latitude, longitude } = req.body;
+      if (!Number.isFinite(latitude) || !Number.isFinite(longitude) || latitude < -90 || latitude > 90 || longitude < -180 || longitude > 180) {
+        return res.status(400).json({ success: false, message: "Enter a valid latitude and longitude" });
+      }
+
+      const agent = await DeliveryAgent.findOne({ userId: req.user._id });
+      if (!agent) {
+        return res.status(404).json({ success: false, message: "Delivery agent not found" });
+      }
+
+      agent.currentLocation = { type: "Point", coordinates: [longitude, latitude] };
+      await agent.save();
+      res.json({ success: true, data: agent });
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
 
 router.post(
   "/tracking",
@@ -248,6 +273,18 @@ router.post(
           message: "Delivery agent not found",
         });
       }
+
+      const order = await Order.findOne({ orderId, deliveryAgentId: agent._id });
+      if (!order) {
+        return res.status(403).json({ success: false, message: "This order is not assigned to you" });
+      }
+
+      if (!Number.isFinite(latitude) || !Number.isFinite(longitude) || latitude < -90 || latitude > 90 || longitude < -180 || longitude > 180) {
+        return res.status(400).json({ success: false, message: "Enter a valid latitude and longitude" });
+      }
+
+      agent.currentLocation = { type: "Point", coordinates: [longitude, latitude] };
+      await agent.save();
 
       const tracking = await DeliveryTracking.create({
         orderId,

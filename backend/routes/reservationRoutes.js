@@ -18,8 +18,8 @@ router.post("/", protect, async (req, res, next) => {
     const {
       restaurantId,
       reservationDate,
-      guests,
-      specialRequest,
+      reservationTime,
+      numberOfGuests,
     } = req.body;
 
     if (!mongoose.Types.ObjectId.isValid(restaurantId)) {
@@ -29,14 +29,22 @@ router.post("/", protect, async (req, res, next) => {
       });
     }
 
-    if (!guests || guests <= 0) {
+    if (!reservationTime) {
+      return res.status(400).json({
+        success: false,
+        message: "Reservation time is required",
+      });
+    }
+
+    if (!numberOfGuests || numberOfGuests <= 0) {
       return res.status(400).json({
         success: false,
         message: "Guest count must be greater than zero",
       });
     }
 
-    if (new Date(reservationDate) <= new Date()) {
+    const reservationDateTime = new Date(`${reservationDate}T${reservationTime}`);
+    if (Number.isNaN(reservationDateTime.getTime()) || reservationDateTime <= new Date()) {
       return res.status(400).json({
         success: false,
         message: "Reservation date must be in the future",
@@ -47,8 +55,8 @@ router.post("/", protect, async (req, res, next) => {
       userId: req.user._id,
       restaurantId,
       reservationDate,
-      guests,
-      specialRequest,
+      reservationTime,
+      numberOfGuests,
       status: "pending",
     });
 

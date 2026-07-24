@@ -31,6 +31,13 @@ router.get('/orders/:restaurantId', protect, authorizeRoles('restaurantOwner', '
 
 router.get('/reservations/:restaurantId', protect, authorizeRoles('restaurantOwner', 'admin'), async (req, res, next) => {
   try {
+    if (req.user.role !== 'admin') {
+      const restaurant = await Restaurant.findOne({ _id: req.params.restaurantId, ownerId: req.user._id });
+      if (!restaurant) {
+        res.status(404);
+        throw new Error('Restaurant not found or not owned by you');
+      }
+    }
     const reservations = await TableReservation.find({ restaurantId: req.params.restaurantId }).sort({ reservationDate: -1 });
     res.json(reservations);
   } catch (error) {
